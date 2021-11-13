@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>drops by tsoop</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <script type="x-shader/x-vertex" id="vertexMetaballs">
+	attribute vec2 position;
+  void main() {
+  	gl_Position = vec4(position, 0.0, 1.0);
+	}
+</script>
+
+<script type="x-shader/x-fragment" id="fragmentMetaballs">
+	precision mediump float;
+  const int NUM_METABALLS = 13;
+
+  uniform vec3 metaballs[13];
+  uniform vec2 uResolution;
+  uniform sampler2D uColorSampler;
+  uniform float uTime;
+
+	void main(){
+  	float x = gl_FragCoord.x;
+    float y = gl_FragCoord.y;
+    float v = 0.0;
+    for (int i = 0; i < NUM_METABALLS; i++) {
+    	vec3 mb = metaballs[i];
+			float dx = mb.x - x;
+			float dy = mb.y - y;
+      float r = mb.z;
+      v += r*r/(dx*dx + dy*dy);
+		}
+
+    vec4 color;
+    if (v > 1.0) {
+    	vec4 textureColor = texture2D(uColorSampler, vec2(gl_FragCoord.x / uResolution.x, gl_FragCoord.y / uResolution.y) );
+      	//discard;
+        color = textureColor ;
+
+		}
+    else {
+    	discard;
+		}
+    gl_FragColor = vec4(color.rgb, 0.98);
+	}
+
+</script>
+
+
+<div id="back" class="wrapper">
+
+  <canvas id="metaball-canvas" class="metaball-canvas"></canvas>
+  <div id="overlay"><h1>drops</h1><h2>by tsoop</h2></div>
+</div>  
+
+
+  <script src='js/Metaballs.js'></script>
+  <script src='js/TweenMax.min.js'></script>
+  <script src="js/index.js"></script>
+
+
+
+</body>
+
+</html>
